@@ -1,0 +1,6 @@
+(4 > 2) && (3 < 5)
+
+Defun {'name': 'double', 'arguments': (x,)} x * 2 double(4)
+
+
+Defun {'name': 'factorial', 'arguments': (n,)} (n == 0) || (n * factorial(n - 1)) factorial(5)
