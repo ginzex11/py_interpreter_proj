@@ -68,5 +68,3 @@ ZeroDivisionError: Raised when attempting to divide by zero.
 Debugging
 The REPL provides detailed error messages to help diagnose issues. Review the message for hints on what went wrong.
 ```
-Contributing
-Contributions are welcome! If you have ideas for improvements or find any bugs, feel free to open an issue or submit a pull request.
