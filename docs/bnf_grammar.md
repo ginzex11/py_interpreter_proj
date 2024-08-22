@@ -19,7 +19,6 @@ This document outlines the Backus–Naur Form (BNF) grammar used to define the s
                | <unary-op> 
                | <function-call> 
                | <lambda>
-               | <if-expression> 
                | <comparison> 
                | <assignment> 
                | "(" <expression> ")"
@@ -40,8 +39,6 @@ This document outlines the Backus–Naur Form (BNF) grammar used to define the s
 <unary-op> ::= "!" <expression>
 
 <lambda> ::= "Lambd" <identifier-list> "." <expression>
-
-<if-expression> ::= <expression> "?" <expression> ":" <expression>
 
 <comparison> ::= <expression> <comparison-operator> <expression>
 <comparison-operator> ::= "==" | "!=" | ">" | "<" | ">=" | "<="
