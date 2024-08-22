@@ -19,41 +19,35 @@ This document describes the syntax and key features of the functional programmin
 ## 2. Operations
 
 ### Arithmetic Operations
-- **Supported Operations:** Addition (`+`), Subtraction (`-`), Multiplication (`*`), Division (`/`), Modulo (`%`).
+- **Supported Operations:** 
+  - **Addition (`+`)**: Adds two numbers.
+  - **Subtraction (`-`)**: Subtracts one number from another.
+  - **Multiplication (`*`)**: Multiplies two numbers.
+  - **Division (`/`)**: Divides one number by another (integer division).
+  - **Modulo (`%`)**: Returns the remainder of division.
 - **Example:** `3 * (2 + 4)`
 
 ### Boolean Operations
-- **Supported Operations:** AND (`&&`), OR (`||`), NOT (`!`).
-- **Example:** `True && (x > 5)`
+- **Supported Operations:**
+  - **AND (`&&`)**: Returns `True` if both operands are `True`.
+  - **OR (`||`)**: Returns `True` if at least one operand is `True`.
+  - **NOT (`!`)**: Returns `True` if the operand is `False`, and `False` if the operand is `True`.
+- **Example:** `True && (5 > 5)`
 
 ### Comparison Operations
-- **Supported Comparisons:** Equal (`==`), Not equal (`!=`), Greater than (`>`), Less than (`<`), Greater than or equal (`>=`), Less than or equal (`<=`).
-- **Example:** `x >= 10`
+- **Supported Comparisons:**
+  - **Equal (`==`)**: Checks if two values are equal.
+  - **Not equal (`!=`)**: Checks if two values are not equal.
+  - **Greater than (`>`)**: Checks if the left value is greater than the right value.
+  - **Less than (`<`)**: Checks if the left value is less than the right value.
+  - **Greater than or equal (`>=`)**: Checks if the left value is greater than or equal to the right value.
+  - **Less than or equal (`<=`)**: Checks if the left value is less than or equal to the right value.
+- **Example:** `12 >= 10`
 
 ## 3. Functions
 
 ### Function Definitions
 - **Syntax:** Functions are defined using the `Defun` keyword followed by a dictionary-like structure for the name and parameters.
-- **Example:** `Defun {'name': 'double', 'arguments': (x,)} x * 2`
-
-### Function Calls
-- **Syntax:** Functions are called by their name followed by arguments in parentheses.
-- **Example:** `double(4)`
-
-### Lambda Expressions
-- **Syntax:** Lambda expressions are defined using the `Lambd` keyword, followed by parameters and a body.
-- **Example:** `(Lambd x. x + 1)`
-
-## 4. Recursion
-
-- **Feature:** The language supports recursive function calls as an alternative to looping constructs.
 - **Example:** 
-
-- Defun {'name': 'factorial', 'arguments': (n,)}
-(n == 0) || (n * factorial(n - 1))
-factorial(5)
-
-## 5. Immutability
-
-- **Feature:** All variables are immutable, meaning once assigned, their values cannot be changed.
-- **Rationale:** This aligns with functional programming principles and ensures that functions remain pure and predictable.
+  ```python
+  Defun {'name': 'triple', 'arguments': (x,)} x * 3 triple(5)

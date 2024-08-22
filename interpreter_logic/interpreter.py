@@ -15,8 +15,10 @@ Create an instance of the Interpreter class and call the eval() method with an A
 to execute the program.
 """
 
-from interpreter_logic.lexer import PLUS, MINUS, MULTIPLY, DIVIDE, MODULO, EQ, NEQ, AND, OR, Token, GTE, LT, GT, LTE
-from interpreter_logic.parser import Literal, Identifier, BinaryOp, LogicalOp, Program, FunctionDef, Call, Lambda, Comparison
+from interpreter_logic.lexer import PLUS, MINUS, MULTIPLY, DIVIDE, MODULO, EQ, NEQ, AND, OR, Token, GTE, LT, GT, LTE, \
+    NOT
+from interpreter_logic.parser import Literal, Identifier, BinaryOp, LogicalOp, Program, FunctionDef, Call, Lambda, \
+    Comparison, UnaryOp
 
 
 class Environment:
@@ -86,53 +88,89 @@ class Interpreter:
 
                 return self.eval(node.body, local_env)
 
-            print(f"Defining function: {node.name.name} with params: {node.params}")
             env.set(node.name.name, function)
 
         elif isinstance(node, Call):
             func = self.eval(node.func, env)
             args = [self.eval(arg, env) for arg in node.args]
-            print(f"Calling function: {func} with arguments: {args}")
-
             if callable(func):
                 return func(*args)
             else:
                 raise TypeError(f"{node.func.name} is not a function")
 
+        elif isinstance(node, Lambda):
+            def lambda_func(*args, captured_env=env):
+                print(f"Lambda called with args: {args}")  # Debug print
+                if len(args) != len(node.params):
+                    raise TypeError("Incorrect number of arguments passed to lambda")
+                # Create a new local environment that includes the captured environment
+                local_env = Environment(parent=captured_env)
+                for param, arg in zip(node.params, args):
+                    print(f"Setting {param.name} = {arg} in local_env")  # Debug print
+                    local_env.set(param.name, arg)
+                # Evaluate the body in the context of the local environment
+                result_lambda = self.eval(node.body, local_env)
+                print(f"Evaluated lambda body with local_env: {result_lambda}")  # Debug print
+                return result_lambda
+            return lambda_func
+
+
         elif isinstance(node, BinaryOp):
             left_value = self.eval(node.left, env)
-            right_value = self.eval(node.right, env)
-            op = node.operator
-            op_type = op.type if isinstance(op, Token) else op
-
-            if op_type == PLUS or op_type == '+':
-                return left_value + right_value
-            elif op_type == MINUS or op_type == '-':
-                return left_value - right_value
-            elif op_type == MULTIPLY or op_type == '*':
-                return left_value * right_value
-            elif op_type == DIVIDE or op_type == '/':
-                if right_value == 0:
-                    raise ZeroDivisionError("Division by zero")
-                return left_value / right_value
-            elif op_type == MODULO or op_type == '%':
-                return left_value % right_value
-            elif op_type == GT or op_type == '>':
-                return left_value > right_value
-            elif op_type == LT or op_type == '<':
-                return left_value < right_value
-            elif op_type == AND or op_type == '&&':
-                return left_value and right_value
+            op_type = node.operator.type if isinstance(node.operator, Token) else node.operator
+            # Evaluate right operand only when necessary (for AND, OR)
+            if op_type == AND or op_type == '&&':
+                if left_value:
+                    right_value = self.eval(node.right, env)
+                    return left_value and right_value
+                else:
+                    return False
             elif op_type == OR or op_type == '||':
-                return left_value or right_value
-            elif op_type == EQ or op_type == '==':
-                return left_value == right_value
+                if left_value:
+                    return True
+                else:
+                    right_value = self.eval(node.right, env)
+                    return left_value or right_value
             else:
-                raise ValueError(f"Unknown operator: {op_type}")
+                right_value = self.eval(node.right, env)
+                if op_type == PLUS or op_type == '+':
+                    return left_value + right_value
+                elif op_type == MINUS or op_type == '-':
+                    return left_value - right_value
+                elif op_type == MULTIPLY or op_type == '*':
+                    return left_value * right_value
+                elif op_type == DIVIDE or op_type == '/':
+                    if right_value == 0:
+                        raise ZeroDivisionError("Division by zero")
+                    return left_value / right_value
+                elif op_type == MODULO or op_type == '%':
+                    return left_value % right_value
+                elif op_type == GT or op_type == '>':
+                    return left_value > right_value
+                elif op_type == LT or op_type == '<':
+                    return left_value < right_value
+                elif op_type == GTE or op_type == '>=':
+                    return left_value >= right_value
+                elif op_type == LTE or op_type == '<=':
+                    return left_value <= right_value
+                elif op_type == EQ or op_type == '==':
+                    return left_value == right_value
+                else:
+                    raise ValueError(f"Unknown operator: {op_type}")
+
+        elif isinstance(node, UnaryOp):
+            operand_value = self.eval(node.operand, env)
+            op_type = node.operator.type if isinstance(node.operator, Token) else node.operator
+
+            if op_type == NOT or op_type == '!':
+                return not operand_value
+            else:
+                raise ValueError(f"Unknown unary operator: {op_type}")
 
         elif isinstance(node, Comparison):
             left_value = self.eval(node.left, env)
             right_value = self.eval(node.right, env)
+
             if not isinstance(left_value, type(right_value)):
                 raise TypeError(f"Cannot compare {type(left_value).__name__} with {type(right_value).__name__}")
             op = node.operator
@@ -166,16 +204,6 @@ class Interpreter:
 
         elif isinstance(node, Identifier):
             return env.get(node.name)
-
-        elif isinstance(node, Lambda):
-            def lambda_func(*args):
-                if len(args) != len(node.params):
-                    raise TypeError("Incorrect number of arguments passed to lambda")
-                local_env = Environment(parent=env)
-                for param, arg in zip(node.params, args):
-                    local_env.set(param.name, arg)
-                return self.eval(node.body, local_env)
-            return lambda_func
 
         elif isinstance(node, Literal):
             return node.value

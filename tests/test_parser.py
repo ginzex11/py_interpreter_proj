@@ -126,16 +126,7 @@ class TestParser(unittest.TestCase):
         expected_ast = "Program(body=[FunctionDef(name=Identifier(name=empty), params=[], body=None)])"
         self.run_test_case(input_code, expected_ast)
 
-    def test_type_mismatch_in_comparison(self):
-        """
-        Tests that an invalid comparison that could cause a type mismatch raises an exception.
-        """
-        input_code = "'hello' > 5"
-        with self.assertRaises(Exception):
-            lexer = Lexer(input_code)
-            tokens = lexer.tokenize()
-            parser = Parser(tokens)
-            parser.parse_program()
+    # In your interpreter tests (e.g., test_interpreter.py)
 
     def test_assignment(self):
         """
@@ -162,6 +153,7 @@ class TestParser(unittest.TestCase):
             "Program(body=[FunctionDef(name=Identifier(name=factorial), params=[Identifier(name=n)], body=BinaryOp(left=BinaryOp(left=Identifier(name=n), operator='==', right=Literal(value=0)), operator='or', right=BinaryOp(left=Identifier(name=n), operator='*', right=Call(func=Identifier(name=factorial), args=[BinaryOp(left=Identifier(name=n), operator='-', right=Literal(value=1))]))))])"
         )
         self.run_test_case(input_code, expected_ast)
+
 
 
 if __name__ == '__main__':

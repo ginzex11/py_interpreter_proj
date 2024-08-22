@@ -23,6 +23,7 @@ def run_interactive():
     Users can type commands or code, which will be evaluated immediately. The REPL
     supports loading scripts from files, exiting, and providing help.
     """
+
     print("Interactive Functional Language Shell")
     print("Type ':load <filename>' to load a file.")
     print("Type ':exit' to quit.")
@@ -64,17 +65,23 @@ def run_interactive():
 
                 lexer = Lexer(full_input)
                 tokens = lexer.tokenize()
-                print("Tokens:", tokens)
+                print(f"Tokens: {tokens}")
 
                 parser = Parser(tokens)
                 ast = parser.parse_program()
-                print("AST:", ast)
+                print(f"AST: {ast}")
 
-                result = interpreter.eval(ast)
-                print("Result:", result)
+                try:
+                    result = interpreter.eval(ast)
+                    print("Result:", result)
+                except TypeError as e:
+                    print(f"Error: {e}")
+                except Exception as e:
+                    print(f"Unexpected Error: {e}")
 
         except Exception as e:
             print(f"Error: {e}")
+
 
 def run_script(filename, interpreter):
     """

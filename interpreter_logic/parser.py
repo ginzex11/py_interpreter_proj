@@ -345,10 +345,19 @@ class Parser:
         return left
 
     def parse_factor(self):
-        """Parse a factor (integer, identifier, function call, lambda, or expression in parentheses)."""
+        """Parse a factor (integer, identifier, function call, lambda, unary operation, or expression in parentheses)."""
         token = self.current_token
 
-        if token.type == INTEGER:
+        if token.type == NOT:  # Handle the NOT operation
+            self.advance()
+            operand = self.parse_factor()
+            return UnaryOp(operator=token, operand=operand)
+
+        elif token.type == STRING:  # Ensure string literals are parsed correctly
+            self.advance()
+            return Literal(token.value)
+
+        elif token.type == INTEGER:
             self.advance()
             return Literal(token.value)
 

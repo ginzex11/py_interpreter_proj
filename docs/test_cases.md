@@ -8,8 +8,24 @@ This document describes the test cases used to validate the functional programmi
 - **Input:** `2 + 3`
 - **Expected Output:** `5`
 
-### Test: Nested Arithmetic
-- **Input:** `(2 + 3) * (4 - 1)`
+### Test: Simple Subtraction
+- **Input:** `10 - 3`
+- **Expected Output:** `7`
+
+### Test: Simple Multiplication
+- **Input:** `6 * 7`
+- **Expected Output:** `42`
+
+### Test: Simple Division
+- **Input:** `8 / 2`
+- **Expected Output:** `4`
+
+### Test: Simple Modulo
+- **Input:** `10 % 3`
+- **Expected Output:** `1`
+
+### Test: Nested Arithmetic Operations
+- **Input:** `(2 + 3) * (5 - 2)`
 - **Expected Output:** `15`
 
 ### Edge Case: Division by Zero
@@ -22,33 +38,60 @@ This document describes the test cases used to validate the functional programmi
 - **Input:** `True && False`
 - **Expected Output:** `False`
 
-### Test: Mixed Operations
+### Test: Logical OR
+- **Input:** `True || False`
+- **Expected Output:** `True`
+
+### Test: Logical NOT
+- **Input:** `!True`
+- **Expected Output:** `False`
+
+### Test: Mixed Logical Operations
 - **Input:** `(4 > 2) && (3 < 5)`
 - **Expected Output:** `True`
 
-## 3. Function Definitions and Calls
+### Edge Case: Short-Circuit Evaluation (AND)
+- **Input:** `False && (10 / 0)`
+- **Expected Output:** `False` (should not raise `ZeroDivisionError` due to short-circuit)
+
+### Edge Case: Short-Circuit Evaluation (OR)
+- **Input:** `True || (10 / 0)`
+- **Expected Output:** `True` (should not raise `ZeroDivisionError` due to short-circuit)
+
+## 3. Comparison Operations
+
+### Test: Simple Equality
+- **Input:** `5 == 5`
+- **Expected Output:** `True`
+
+### Test: Simple Inequality
+- **Input:** `5 != 4`
+- **Expected Output:** `True`
+
+### Test: Greater Than
+- **Input:** `7 > 3`
+- **Expected Output:** `True`
+
+### Test: Less Than
+- **Input:** `3 < 7`
+- **Expected Output:** `True`
+
+### Test: Greater Than or Equal
+- **Input:** `5 >= 5`
+- **Expected Output:** `True`
+
+### Test: Less Than or Equal
+- **Input:** `4 <= 5`
+- **Expected Output:** `True`
+
+### Edge Case: Type Mismatch in Comparison
+- **Input:** `'hello' > 5`
+- **Expected Output:** `Error`
+
+## 4. Function Definitions and Calls
 
 ### Test: Simple Function Call
-- **Input:** 
-
-Defun {'name': 'double', 'arguments': (x,)} x * 2
-double(5)
-- **Expected Output:** `10`
-
-### Test: Recursive Function (Factorial)
-- **Input:** 
-
-Defun {'name': 'factorial', 'arguments': (n,)}
-(n == 0) || (n * factorial(n - 1))
-factorial(5)
-- **Expected Output:** `120`
-
-## 4. Error Handling
-
-### Edge Case: Undefined Variable
-- **Input:** `y + 2`
-- **Expected Output:** `NameError`
-
-### Edge Case: Invalid Comparison
-- **Input:** `'hello' > 5`
-- **Expected Output:** `TypeError`
+- **Input:**
+  ```python
+  Defun {'name': 'triple', 'arguments': (x,)} x * 3 triple(5)
+**Expected Output:** `15`

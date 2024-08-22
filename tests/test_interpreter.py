@@ -25,21 +25,20 @@ class TestInterpreter(unittest.TestCase):
     Test case class for validating the Interpreter class functionality.
     """
 
-    def run_test_case(self, input_code, expected_result):
-        """
-        Asserts that the Interpreter correctly evaluates the input code to produce the expected result.
-
-        Args:
-            input_code (str): The input source code.
-            expected_result (any): The expected result of interpreting the input code.
-        """
+    def run_test_case(self, input_code, expected_output):
         lexer = Lexer(input_code)
         tokens = lexer.tokenize()
+        print(f"Tokens: {tokens}")  # Debug print
+
         parser = Parser(tokens)
         ast = parser.parse_program()
+        print(f"AST: {ast}")  # Debug print
+
         interpreter = Interpreter()
         result = interpreter.eval(ast)
-        self.assertEqual(result, expected_result, f"Expected: {expected_result}, but got: {result}")
+        print(f"Result: {result}")  # Debug print
+
+        self.assertEqual(result, expected_output, f"Expected: {expected_output}, but got: {result}")
 
     def run_test_case_with_exception(self, input_code, expected_exception):
         """
@@ -94,9 +93,25 @@ class TestInterpreter(unittest.TestCase):
 
     def test_recursive_function_factorial(self):
         """Tests a recursive function (factorial) definition and call."""
-        self.run_test_case("Defun {'name': 'factorial', 'arguments': (n,)} (n == 0) || (n * factorial(n - 1)) factorial(5)", 120)
+        self.run_test_case(
+            "Defun {'name': 'factorial', 'arguments': (n,)} (n == 0) || (n * factorial(n - 1)) factorial(5)", 120)
 
     # Error Handling
+
+    # In your interpreter tests (e.g., test_interpreter.py)
+    def test_type_mismatch_in_comparison(self):
+        """
+        Tests that an invalid comparison that could cause a type mismatch raises a TypeError.
+        """
+        input_code = "'hello' > 5"
+        with self.assertRaises(TypeError):
+            lexer = Lexer(input_code)
+            tokens = lexer.tokenize()
+            parser = Parser(tokens)
+            ast = parser.parse_program()
+            interpreter = Interpreter()
+            interpreter.eval(ast)
+
     def test_division_by_zero(self):
         """Tests division by zero error handling."""
         self.run_test_case_with_exception("10 / 0", ZeroDivisionError)
@@ -114,23 +129,36 @@ class TestInterpreter(unittest.TestCase):
         """
         self.run_test_case(input_code, 14)
 
-    # Additional tests can be uncommented and added as needed
-    # def test_passing_function_as_argument(self):
-    #     """Tests passing a function as an argument to another function."""
-    #     input_code = """
-    #     Defun {'name': 'apply', 'arguments': (f, x,)} f(x)
-    #     Defun {'name': 'increment', 'arguments': (n,)} n + 1
-    #     apply(increment, 5)
-    #     """
-    #     self.run_test_case(input_code, 6)
+    def test_unary_op(self):
+        """Tests unary operation."""
+        input_code = "!(3 < 4)"
+        self.run_test_case(input_code, False)
 
-    # def test_lambda_within_function(self):
-    #     """Tests using a lambda within a function."""
-    #     input_code = """
-    #     Defun {'name': 'double_apply', 'arguments': (f, x,)} f(f(x))
-    #     double_apply((Lambd y. y * 2), 5)
-    #     """
-    #     self.run_test_case(input_code, 20)
+    def test_lambda_manual_debugging(self):
+        """
+        Manual debugging for lambda expression evaluation.
+        """
+        input_code = "(Lambd x. (Lambd y. (x + y))) (3) (5)"
+        lexer = Lexer(input_code)
+        tokens = lexer.tokenize()
+        parser = Parser(tokens)
+        ast = parser.parse_program()
+        parsed_lambda_expr = ast.body[0]  # Getting the lambda expression from the AST
+
+        interpreter = Interpreter()
+
+        # Step 1: Evaluate the outer lambda expression
+        lambda_expr = interpreter.eval(parsed_lambda_expr)
+        print("Outer lambda result (should be a function):", lambda_expr)
+
+        # Step 2: Apply the first argument (3) to the lambda
+        partial_application = lambda_expr(3)
+        print("Result after applying the first argument (should be a function):", partial_application)
+
+        # Step 3: Apply the second argument (5) to the resulting lambda
+        final_result = partial_application(5)
+        print("Final result (should be 8):", final_result)
+        self.assertEqual(final_result, 8)
 
 
 if __name__ == '__main__':
